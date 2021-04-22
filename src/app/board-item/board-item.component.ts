@@ -6,7 +6,11 @@ import { BoardDataService } from "../board-data.service";
 
 @Component({
   selector: "app-board-item",
-  templateUrl: "./board-item.component.html",
+  template: `
+  <app-panel *ngIf="item$ | async as item" [class.collapsed]="item.collapsed">
+  <h3 (click)="item.collapsed=!item.collapsed">{{item.name}}</h3>
+  <pre>{{item|json}}</pre>
+  </app-panel>`,
 })
 export class BoardItemComponent implements OnInit {
   localState = new BehaviorSubject({

@@ -25,12 +25,12 @@ export interface Item {
     children?: Item[]
 }
 
-@Injectable()
+@Injectable({providedIn:'root'})
 export class BoardDataService {
   #board = Array.from({ length: rand(5, 3) }, (_, o) => {
     return {  
       ...createItem(`type ${o}`),
-      children: Array.from({ length: rand(600, 150) }, (_, i) => createItem(`card ${i}`))
+      children: Array.from({ length: rand(60, 15) }, (_, i) => createItem(`card ${i}`))
       } as Item
   })
   
