@@ -12,9 +12,7 @@ import { BoardDataService } from "../board-data.service";
   styleUrls: ["./board.component.css"]
 })
 export class BoardComponent implements OnInit {
-  board$ = this.data.board$.pipe(
-    tap(data => data.forEach(row => console.log(row.name)))
-  );
+  board$ = this.data.board$
   constructor(private data: BoardDataService) {}
 
   ngOnInit() {}
