@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.068);
+  padding: 3px 8px;
+  border-radius: 5px;
+  margin: 0 3px 4px;
+  min-height: 4rem;
+  overflow: hidden;
+}
+
+:host.collapsed {
+  min-height: 1rem;
+  height: 1.8rem;
+}
+:host::after {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  display: block;
+  cursor: pointer;
+}
+:host.collapsed::after {
+  content: "◄";
+}
+:host:not(.collapsed)::after {
+  content: "▼";
+}

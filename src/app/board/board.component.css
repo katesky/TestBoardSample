@@ -1,0 +1,11 @@
+:host {
+  display:grid;
+  min-height: calc(98vh - 10px);
+  /** todo calculat based on columns */
+  min-width: 400vw;
+  overflow-y: scroll;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 5px;
+  margin: 5px;
+}
+
