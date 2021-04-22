@@ -7,7 +7,7 @@ import { BoardDataService } from "../board-data.service";
 @Component({
   selector: "app-board-item",
   template: `
-  <app-panel *ngIf="item$ | async as item" [class.collapsed]="item.collapsed">
+  <app-panel *ngIf="item$ | async as item" [class.collapsed]="item.collapsed" draggable='true'>
   <h3 (click)="item.collapsed=!item.collapsed">{{item.name}}</h3>
   <pre>{{item|json}}</pre>
   </app-panel>`,
