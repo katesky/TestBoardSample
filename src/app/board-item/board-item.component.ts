@@ -2,13 +2,13 @@ import { Input } from "@angular/core";
 import { Component, OnInit } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { pluck, switchMap } from "rxjs/operators";
-import { BoardDataService } from "../board-data.service";
+import { BoardDataService, Item } from "../board-data.service";
 
 @Component({
   selector: "app-board-item",
   template: `
   <app-panel *ngIf="item$ | async as item" [class.collapsed]="item.collapsed" draggable='true'>
-  <h3 (click)="item.collapsed=!item.collapsed">{{item.name}}</h3>
+  <h3 (click)="toggleCollapse(item)">{{item.name}}</h3>
   <pre>{{item|json}}</pre>
   </app-panel>`,
 })
@@ -27,6 +27,15 @@ export class BoardItemComponent implements OnInit {
   );
 
   constructor(private data: BoardDataService) {}
+
+  save(item:Item) {
+    this.data.saveItem(item)
+  }
+
+  toggleCollapse(item:Item) {
+    item.collapsed=!item.collapsed
+    this.save(item)
+  }
 
   ngOnInit() {}
 }
