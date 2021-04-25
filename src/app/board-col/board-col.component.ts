@@ -8,7 +8,7 @@ import {BoardDataService, Item} from '../board-data.service';
   template: `
     <ng-container *ngIf="item$ | async as item">
       <h2 (click)="action(item)">{{ item.name }}</h2>
-      <app-board-item *ngFor="let bi of item.children" [itemId]="bi.id"></app-board-item>
+      <app-board-item *ngFor="let bi of item.children; trackBy:byId" [itemId]="bi.id"></app-board-item>
     </ng-container>
   `,
   styles: [
@@ -16,22 +16,23 @@ import {BoardDataService, Item} from '../board-data.service';
       :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid gray;
+        /* border: 1px solid gray; */
         max-height: 97vh;
         overflow-x: auto;
+        gap: 8px;
       }
 
       h2 {
         align-self: center;
         text-align: center;
         width: 97%;
-        border-bottom: 2px solid rgb(71, 77, 95);
-        box-shadow: 0 0 0 5px white;
+        border-bottom: 2px solid var(--background);
+        box-shadow: 0 0 0 5px  var(--foreground-accent);
         padding-bottom: 2px;
         margin-bottom: 6px;
         position: sticky;
         top: 0;
-        background-color: white;
+        background-color: var(--foreground-accent);
         z-index: +1;
       }
     `,
@@ -51,13 +52,15 @@ export class BoardColComponent implements OnInit {
     switchMap(id => this.data.getItemById(id))
   );
 
+  byId = (_, item: Item) => item.id;
+
   constructor(private data: BoardDataService) {}
 
   action(item: Item) {
     // const curentState = typeof items['allClosed'] === 'boolean' ? items['allClosed'] : false;
     // items.children.forEach(i => (i.collapsed = !curentState));
     // items['allClosed'] = !curentState;
-    this.data.addItem(item.id)
+    this.data.addItem(item.id);
   }
 
   ngOnInit() {}

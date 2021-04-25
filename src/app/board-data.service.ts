@@ -6,7 +6,7 @@ import {distinctUntilChanged, map, shareReplay} from 'rxjs/operators';
 const lower = 'abcdefghijklmnopqrstuvwxyz';
 const tokens = lower + lower.toUpperCase() + '0123456789';
 const tokenLen = tokens.length;
-const rand = (ammount = 20, min = 0) => Math.floor(Math.random() * ammount) + min;
+const rand = (amount = 20, min = 0) => Math.floor(Math.random() * amount) + min;
 
 const token = () => tokens[rand(tokenLen)];
 const genId = () => Array.from({length: 8}, () => token()).join('');
@@ -28,76 +28,105 @@ export interface Item {
   children?: Item[];
 }
 
-const generateNewBoard = () =>
-  Array.from({length: rand(6, 3)}, (_, o) => {
-    const parent = createItem(`type ${o}`);
-    return {
-      ...parent,
-      children: Array.from({length: rand(60, 15)}, (_, i) => createItem(`card ${i} of ${o}`, parent.id)),
-    } as Item;
-  });
-
 @Injectable({providedIn: 'root'})
 export class BoardDataService {
-  #boardSub = new BehaviorSubject(this.read());
-  board$ = this.#boardSub.asObservable();
-
-  #list = this.#boardSub.pipe(
-    map(data => data.reduce((l, item) => l.concat(item).concat(item.children), [] as Item[])),
-    shareReplay({refCount: true, bufferSize: 1})
-  );
+  #boardSub = new BehaviorSubject(read());
+  board$ = this.#boardSub.pipe(map(root => root.children));
 
   constructor() {}
 
   getItemById(id: string) {
-    return this.#list.pipe(
-      map(list => list.find(item => item.id === id)),
+    return this.#boardSub.pipe(
+      map(root => this.#find(id, root)),
       distinctUntilChanged()
     );
   }
 
-  private read() {
-    console.log('read');
-    try {
-      const rawData = localStorage.getItem('sampleData');
-      if (rawData) {
-        return JSON.parse(rawData) as Item[];
-      }
-    } catch (e) {
-      console.log(e);
+  #find = (id: string, findIn = this.#boardSub.value): Item => {
+    const found = findIn.children?.find(child => child.id === id);
+    if (found) {
+      return found;
     }
-    const newBoard = generateNewBoard();
-    localStorage.setItem('sampleData', JSON.stringify(newBoard));
-    return newBoard;
-  }
+    for (const child of findIn.children || []) {
+      const subFound = this.#find(id, child);
+      if (subFound) {
+        return subFound;
+      }
+    }
+  };
 
   addItem(parentId = 'root'): void {
     this.saveItem(createItem('new Item', parentId));
   }
 
+  removeItem(item: Item) {
+    if (item.id === 'root') {
+      return;
+    }
+    const board = this.#boardSub.value;
+    const parent = this.#find(item.parentId, board);
+    parent.children = parent.children.filter(child => child.id !== item.id);
+    this.updateBoard(board);
+  }
+
   saveItem(item: Item): void {
     const board = this.#boardSub.value;
-    if (item.parentId !== 'root') {
-      const parent = board.find(col => col.id === item.parentId);
-      if (!parent) {
-        throw new Error('no support for deeply nested items yet');
-      }
-      const index = parent.children.findIndex(i => i.id === item.id);
-      if (index < 0) {
-        parent.children.unshift(item);
-      } else {
-        parent.children[index] = item;
-      }
-    } else {
-      const index = board.findIndex(i => i.id === item.id);
-      if (index < 0) {
-        board.unshift(item);
-      } else {
-        board[index] = item;
-      }
+    const parent = this.#find(item.parentId, board);
+    if (!parent) {
+      throw new Error('no support for deeply nested items yet');
     }
+    const index = parent.children.findIndex(i => i.id === item.id);
+    if (index < 0) {
+      /** put new items on top */
+      parent.children.unshift(item);
+    } else {
+      /** just update */
+      parent.children[index] = item;
+    }
+    this.updateBoard(board);
+  }
+
+  private updateBoard(board: Item) {
     this.#boardSub.next(board);
     localStorage.setItem('sampleData', JSON.stringify(board));
-    console.log('Saved', item);
   }
+}
+
+function generateNewBoard() {
+  const root = createItem('root');
+  return {
+    ...root,
+    children: Array.from({length: rand(15, 3)}, (_, o) => {
+      const parent = createItem(`type ${o}`, 'root');
+      return {
+        ...parent,
+        children: Array.from({length: rand(60, 3)}, (_, i) => createItem(`card ${i} of ${o}`, parent.id)),
+      } as Item;
+    }),
+  };
+}
+
+function read(): Item {
+  try {
+    const rawData = localStorage.getItem('sampleData');
+    if (rawData) {
+      return JSON.parse(rawData) as Item;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  const newBoard = generateNewBoard();
+  localStorage.setItem('sampleData', JSON.stringify(newBoard));
+  return newBoard;
+}
+
+function flatten(item: Item): Set<Item> {
+  const flat = new Set([item]);
+  if (item.children) {
+    for (const child of item.children) {
+      const grandChildren = flatten(child);
+      grandChildren.forEach(i => flat.add(i));
+    }
+  }
+  return flat;
 }
