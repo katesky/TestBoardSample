@@ -1,4 +1,5 @@
 import {Component, Directive, ElementRef, HostBinding, Input, NgZone, OnInit} from '@angular/core';
+import { BoardColComponent } from '../board-col/board-col.component';
 
 @Component({
   selector: 'app-panel',
@@ -9,6 +10,16 @@ export class PanelComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+}
+
+
+@Directive({
+  selector: 'app-panel[active]',
+})
+export class PannelActiveDirective {
+
+  constructor(private col:BoardColComponent) {}
+
 }
 
 @Directive({

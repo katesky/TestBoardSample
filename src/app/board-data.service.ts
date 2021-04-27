@@ -23,6 +23,7 @@ export interface Item {
   id: string;
   parentId: string;
   collapsed: boolean;
+  active?:boolean
   name: string;
   description?: string;
   children?: Item[];
@@ -30,7 +31,7 @@ export interface Item {
 
 @Injectable({providedIn: 'root'})
 export class BoardDataService {
-  #boardSub = new BehaviorSubject(read());
+  #boardSub = new BehaviorSubject(restoreFromLocalStorage());
   board$ = this.#boardSub.pipe(map(root => root.children));
 
   constructor() {}
@@ -106,7 +107,7 @@ function generateNewBoard() {
   };
 }
 
-function read(): Item {
+function restoreFromLocalStorage(): Item {
   try {
     const rawData = localStorage.getItem('sampleData');
     if (rawData) {
