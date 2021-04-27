@@ -36,7 +36,7 @@ export class PanelCollapsedDirective {
 
   constructor(private elmRef: ElementRef, private zone: NgZone) {}
 
-  /** 
+  /**
    * yes, this should be an css animation!
    * But I'm just playing with popmotion.
    */
@@ -51,7 +51,6 @@ export class PanelCollapsedDirective {
       animate({
         from,
         to,
-        
         onUpdate: l => {
           this.#elm.style.height = `${l}px`;
         },

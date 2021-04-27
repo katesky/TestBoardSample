@@ -11,32 +11,7 @@ import {BoardDataService, Item} from '../board-data.service';
       <app-board-item *ngFor="let bi of item.children; trackBy:byId" [itemId]="bi.id"></app-board-item>
     </ng-container>
   `,
-  styles: [
-    `
-      :host {
-        display: flex;
-        flex-direction: column;
-        /* border: 1px solid gray; */
-        max-height: 97vh;
-        overflow-x: auto;
-        gap: 8px;
-      }
-
-      h2 {
-        align-self: center;
-        text-align: center;
-        width: 97%;
-        border-bottom: 2px solid var(--background);
-        box-shadow: 0 0 0 5px  var(--foreground-accent);
-        padding-bottom: 2px;
-        margin-bottom: 6px;
-        position: sticky;
-        top: 0;
-        background-color: var(--foreground-accent);
-        z-index: +1;
-      }
-    `,
-  ],
+  styleUrls: ['./board-col.component.css'],
 })
 export class BoardColComponent implements OnInit {
   localState = new BehaviorSubject({
