@@ -8,10 +8,10 @@ import {BoardDataService, Item} from '../board-data.service';
   selector: 'app-board-item',
   template: ` 
   <app-panel 
-    *ngIf="item$ | async as item" 
-    [collapsed]="item.collapsed" 
+    *ngIf="item$ | async as item"  
+    [collapsed]="item.collapsed" [collapseTarget]="collapser" (collapsed)="onCollapsed(item)"
     draggable="true">
-    <h3 (click)="toggleCollapse(item)">{{ item.name }}</h3>
+    <h3 #collapser >{{ item.name }}</h3>
     <pre>{{ item | json }}</pre>
     <button (click)="remove(item)">🗑</button>
   </app-panel>`,
@@ -40,7 +40,7 @@ export class BoardItemComponent implements OnInit {
     this.data.removeItem(item);
   }
 
-  toggleCollapse(item: Item) {
+  onCollapsed(item: Item) {
     item.collapsed = !item.collapsed;
     this.save(item);
   }
