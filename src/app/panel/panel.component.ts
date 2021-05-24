@@ -14,7 +14,7 @@ export class PanelComponent implements OnInit {
 
 
 @Directive({
-  selector: 'app-panel[active]',
+  selector: 'app-panel[activex]',
 })
 export class PannelActiveDirective {
 
@@ -23,7 +23,7 @@ export class PannelActiveDirective {
 }
 
 @Directive({
-  selector: 'app-panel[collapsed]',
+  selector: 'app-panel[collapsedxxx]',
 })
 export class PanelCollapsedDirective {
   // @HostBinding('class.collapsed') #isCollapsed:boolean

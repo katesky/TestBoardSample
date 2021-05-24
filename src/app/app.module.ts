@@ -10,6 +10,7 @@ import {BoardItemComponent} from './board-item/board-item.component';
 import {PanelCollapsedDirective, PanelComponent} from './panel/panel.component';
 import { ActiveItemDirective } from './board-item/active-item.directive';
 import { ToggleCollapseDirective } from './board-item/collapsable.directive';
+import { DraggableDirective } from './draggable.directive';
 
 @NgModule({
   imports: [BrowserModule, FormsModule],
@@ -23,6 +24,7 @@ import { ToggleCollapseDirective } from './board-item/collapsable.directive';
     PanelCollapsedDirective,
     ActiveItemDirective,
     ToggleCollapseDirective,
+    DraggableDirective,
   ],
   bootstrap: [AppComponent],
   providers: [],
